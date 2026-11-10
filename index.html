@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>TB4 · 2.2K Data Atlas</title>
+  <meta name="description" content="TB4 2,237-task interactive distribution explorer">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <header class="masthead">
+    <div>
+      <p class="eyebrow">TERMINAL BENCH 4 · DATASET OBSERVATORY</p>
+      <h1>2.2K Data Atlas</h1>
+      <p class="dek">按原题官方类型归类。成功情况与难度均取未开启强化提示词时的 Qwen3.8‑Max 原始 rollout。</p>
+    </div>
+    <div class="stamp"><span>BASELINE</span><strong>QWEN3.8‑MAX</strong><small>PRE‑ENHANCED PROMPT</small></div>
+  </header>
+
+  <main>
+    <section id="summary" class="summary-grid" aria-label="总体概览"></section>
+
+    <section class="toolbar" aria-label="筛选器">
+      <label>数据来源<select id="sourceFilter"><option value="all">全部 2,237</option><option value="original977">原始 977</option><option value="old630">第一批 630</option><option value="new630">第二批 630</option></select></label>
+      <label>结果<select id="outcomeFilter"><option value="all">全部结果</option><option value="baseline_success">成功</option><option value="baseline_failure">失败</option></select></label>
+      <label>搜索<input id="searchInput" type="search" placeholder="任务 ID / 原题名"></label>
+      <button id="resetBtn" class="ghost">清除筛选</button>
+    </section>
+
+    <section class="section-head">
+      <div><p class="eyebrow">OFFICIAL TAXONOMY</p><h2>任务分布</h2></div>
+      <div id="legend" class="legend"></div>
+    </section>
+    <section id="categoryGrid" class="category-grid" aria-label="官方分类分布"></section>
+
+    <section class="section-head metrics-head">
+      <div><p class="eyebrow">MODEL EFFORT</p><h2>交互轮数与输出 Token</h2></div>
+      <p>点击上方任一类别可聚焦；悬停圆点查看单题。</p>
+    </section>
+    <section class="analytics-grid">
+      <article class="panel"><header><h3>难度分布</h3><span id="difficultyScope"></span></header><div id="difficultyChart" class="bar-chart"></div></article>
+      <article class="panel scatter-panel"><header><h3>轮数 × 输出 Token</h3><span>每点一题</span></header><div id="scatter"></div></article>
+    </section>
+
+    <section class="section-head metrics-head">
+      <div><p class="eyebrow">DIFFICULTY BY TYPE</p><h2>不同类型的难度分布</h2></div>
+      <label class="inline-select">聚合层级<select id="difficultyLevel"><option value="subcategory">二级类别</option><option value="category">一级类别</option></select></label>
+    </section>
+    <section class="panel type-difficulty-panel">
+      <div class="difficulty-key"><span><i class="d-easy"></i>简单</span><span><i class="d-medium"></i>中等</span><span><i class="d-hard"></i>困难</span><span><i class="d-very-hard"></i>极难</span></div>
+      <div id="typeDifficulty" class="type-difficulty"></div>
+    </section>
+
+    <section class="task-section">
+      <div class="section-head compact"><div><p class="eyebrow">TASK INDEX</p><h2 id="taskTitle">任务明细</h2></div><span id="taskCount"></span></div>
+      <div class="table-wrap"><table><thead><tr><th data-sort="id">任务</th><th data-sort="category">类别</th><th data-sort="source">来源</th><th data-sort="outcome">结果</th><th data-sort="rounds">交互轮数</th><th data-sort="output_tokens">输出 Token</th><th data-sort="trajectory_bytes">轨迹大小</th></tr></thead><tbody id="taskRows"></tbody></table></div>
+      <button id="moreBtn" class="more">加载更多</button>
+    </section>
+  </main>
+
+  <aside id="drawer" class="drawer" aria-hidden="true"><button id="closeDrawer" aria-label="关闭">×</button><div id="drawerBody"></div></aside>
+  <div id="scrim" class="scrim"></div>
+  <div id="tooltip" class="tooltip"></div>
+  <script src="app.js"></script>
+</body>
+</html>
