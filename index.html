@@ -4,56 +4,86 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Terminal Bench · Data Atlas</title>
-  <meta name="description" content="TB4、TB2.1 与总体任务的 DeepSeek 完整轨迹 Token 分布图谱">
+  <meta name="description" content="TB4、TB2.1 与总体任务分布，以及原 TB4 2,237 题交互明细">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
   <header class="masthead">
     <div>
       <p class="eyebrow">TERMINAL BENCH · DATASET OBSERVATORY</p>
-      <h1><span id="heroCount">13.1K</span> Data Atlas</h1>
-      <p class="dek">按 DeepSeek 每题唯一完整轨迹的 DataHub Token 统计难度。可独立查看 TB4、TB2.1，或查看去重后的总体分布。</p>
+      <h1>13.1K Data Atlas</h1>
+      <p class="dek">新增总体、TB4 与 TB2.1 的 DeepSeek 完整轨迹 Token 图谱；原 2,237 题 Qwen3.8‑Max 交互分析、筛选和任务明细全部保留。</p>
     </div>
-    <div class="stamp"><span>DIFFICULTY BASIS</span><strong>DEEPSEEK TOKENS</strong><small>ONE TRAJECTORY / TASK</small></div>
+    <div class="stamp"><span>DUAL LENS</span><strong>DEEPSEEK + QWEN</strong><small>TOKEN ATLAS / TASK DETAIL</small></div>
   </header>
+
   <main>
+    <section class="scope-switch" aria-label="数据集范围">
+      <button class="active" data-scope="overall"><span>01</span>总体</button>
+      <button data-scope="tb4"><span>02</span>TB4</button>
+      <button data-scope="tb21"><span>03</span>TB2.1</button>
+    </section>
+    <section id="overviewSummary" class="summary-grid" aria-label="完整轨迹概览"></section>
+
+    <section class="section-head metrics-head overview-head">
+      <div><p class="eyebrow">DEEPSEEK TRAJECTORY EFFORT</p><h2>完整轨迹 Token 难度</h2></div>
+      <p id="overviewScope"></p>
+    </section>
+    <section class="analytics-grid overview-grid">
+      <article class="panel"><header><h3>四档难度分布</h3><span>&lt;64K / 64–128K / 128–256K / &gt;256K</span></header><div id="tokenDifficultyChart" class="bar-chart"></div></article>
+      <article class="panel"><header><h3>轨迹长度分桶</h3><span>每柱一档</span></header><div id="tokenHistogram" class="bar-chart token-histogram"></div></article>
+    </section>
+    <section class="panel dataset-compare-panel">
+      <div class="difficulty-key"><span><i class="d-easy"></i>简单</span><span><i class="d-medium"></i>中等</span><span><i class="d-hard"></i>困难</span><span><i class="d-very-hard"></i>极难</span><span><i class="d-unknown"></i>待核验</span></div>
+      <div id="datasetCompare" class="type-difficulty"></div>
+    </section>
+
+    <section class="section-head legacy-head">
+      <div><p class="eyebrow">ORIGINAL INTERACTIVE ATLAS · FULLY PRESERVED</p><h2>TB4 2,237 题交互明细</h2></div>
+      <p>以下为原站完整功能：来源、结果与搜索筛选，类别聚焦、散点图、类型难度、排序、任务抽屉。</p>
+    </section>
     <section id="summary" class="summary-grid" aria-label="总体概览"></section>
+
     <section class="toolbar" aria-label="筛选器">
-      <label>数据范围<select id="viewFilter"><option value="overall">总体 · 13,147</option><option value="tb4">TB4 · 3,223</option><option value="tb21">TB2.1 · 10,924</option></select></label>
-      <label>难度<select id="difficultyFilter"><option value="all">全部难度</option><option value="simple">简单 · &lt;64K</option><option value="medium">中等 · 64K–128K</option><option value="hard">困难 · 128K–256K</option><option value="extreme">极难 · &gt;256K</option><option value="unknown">待核验</option></select></label>
-      <label>指标<select id="metricFilter"><option value="domain">子任务领域</option><option value="language">编程语言</option></select></label>
+      <label>数据来源<select id="sourceFilter"><option value="all">全部 2,237</option><option value="original977">原始 977</option><option value="old630">第一批 630</option><option value="new630">第二批 630</option></select></label>
+      <label>结果<select id="outcomeFilter"><option value="all">全部结果</option><option value="baseline_success">成功</option><option value="baseline_failure">失败</option></select></label>
+      <label>搜索<input id="searchInput" type="search" placeholder="任务 ID / 原题名"></label>
       <button id="resetBtn" class="ghost">清除筛选</button>
     </section>
+
     <section class="section-head">
-      <div><p class="eyebrow">TASK TAXONOMY</p><h2 id="taxonomyTitle">子任务领域分布</h2></div>
+      <div><p class="eyebrow">OFFICIAL TAXONOMY</p><h2>任务分布</h2></div>
       <div id="legend" class="legend"></div>
     </section>
-    <section id="categoryGrid" class="category-grid" aria-label="领域分布"></section>
+    <section id="categoryGrid" class="category-grid" aria-label="官方分类分布"></section>
+
     <section class="section-head metrics-head">
-      <div><p class="eyebrow">MODEL EFFORT</p><h2>完整轨迹 Token</h2></div>
-      <p id="scopeNote"></p>
+      <div><p class="eyebrow">MODEL EFFORT</p><h2>交互轮数与输出 Token</h2></div>
+      <p>点击上方任一类别可聚焦；悬停圆点查看单题。</p>
     </section>
     <section class="analytics-grid">
       <article class="panel"><header><h3>难度分布</h3><span id="difficultyScope"></span></header><div id="difficultyChart" class="bar-chart"></div></article>
-      <article class="panel"><header><h3>轨迹长度分桶</h3><span>每柱为任务数</span></header><div id="histogramChart" class="bar-chart histogram"></div></article>
+      <article class="panel scatter-panel"><header><h3>轮数 × 输出 Token</h3><span>每点一题</span></header><div id="scatter"></div></article>
     </section>
+
     <section class="section-head metrics-head">
-      <div><p class="eyebrow">DIFFICULTY BY DATASET</p><h2>不同数据集的难度分布</h2></div>
-      <p>总体视图对重叠任务去重，并采用 TB4 记录。</p>
+      <div><p class="eyebrow">DIFFICULTY BY TYPE</p><h2>不同类型的难度分布</h2></div>
+      <label class="inline-select">聚合层级<select id="difficultyLevel"><option value="subcategory">二级类别</option><option value="category">一级类别</option></select></label>
     </section>
     <section class="panel type-difficulty-panel">
-      <div class="difficulty-key"><span><i class="d-easy"></i>简单</span><span><i class="d-medium"></i>中等</span><span><i class="d-hard"></i>困难</span><span><i class="d-very-hard"></i>极难</span><span><i class="d-unknown"></i>待核验</span></div>
+      <div class="difficulty-key"><span><i class="d-easy"></i>简单</span><span><i class="d-medium"></i>中等</span><span><i class="d-hard"></i>困难</span><span><i class="d-very-hard"></i>极难</span></div>
       <div id="typeDifficulty" class="type-difficulty"></div>
     </section>
+
     <section class="task-section">
-      <div class="section-head compact"><div><p class="eyebrow">DISTRIBUTION INDEX</p><h2 id="tableTitle">统计明细</h2></div><span id="tableCount"></span></div>
-      <div class="table-wrap"><table><thead><tr><th>排名</th><th>分组</th><th>任务数</th><th>占比</th><th>相对规模</th></tr></thead><tbody id="tableRows"></tbody></table></div>
-    </section>
-    <section class="method">
-      <p class="eyebrow">METHODOLOGY</p><h2>口径说明</h2>
-      <div class="method-grid"><p><b>难度定义</b><br>简单 &lt;64K；中等 64K–128K；困难 128K–256K；极难 &gt;256K。实现边界为 65,536 / 131,072 / 262,144 tokens。</p><p><b>总体去重</b><br>TB4 3,223 与 TB2.1 10,924 中有 1,000 个重叠任务；总体为 13,147 个唯一任务，重叠项采用 TB4 记录。</p><p><b>未知值</b><br>没有完整可计算 Token 的记录不强行归档，单列为“待核验”。所有指标均来自 DeepSeek 每题一条轨迹。</p></div>
+      <div class="section-head compact"><div><p class="eyebrow">TASK INDEX</p><h2 id="taskTitle">任务明细</h2></div><span id="taskCount"></span></div>
+      <div class="table-wrap"><table><thead><tr><th data-sort="id">任务</th><th data-sort="category">类别</th><th data-sort="source">来源</th><th data-sort="outcome">结果</th><th data-sort="rounds">交互轮数</th><th data-sort="output_tokens">输出 Token</th><th data-sort="trajectory_bytes">轨迹大小</th></tr></thead><tbody id="taskRows"></tbody></table></div>
+      <button id="moreBtn" class="more">加载更多</button>
     </section>
   </main>
+
+  <aside id="drawer" class="drawer" aria-hidden="true"><button id="closeDrawer" aria-label="关闭">×</button><div id="drawerBody"></div></aside>
+  <div id="scrim" class="scrim"></div>
   <div id="tooltip" class="tooltip"></div>
   <script src="app.js"></script>
 </body>
